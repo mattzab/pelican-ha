@@ -7,7 +7,7 @@ from typing import Any
 import voluptuous as vol
 
 from homeassistant.config_entries import ConfigEntry
-from homeassistant.const import CONF_PASSWORD, CONF_USERNAME, Platform
+from homeassistant.const import Platform
 from homeassistant.core import HomeAssistant
 from homeassistant.exceptions import ConfigEntryNotReady
 import homeassistant.helpers.config_validation as cv
@@ -15,8 +15,10 @@ from homeassistant import config_entries
 
 from .const import (
     CONF_BASE_URL,
+    CONF_PASSWORD,
     CONF_POLL_INTERVAL,
     CONF_THERMOSTAT_NAME,
+    CONF_USERNAME,
     DEFAULT_BASE_URL,
     DOMAIN,
 )

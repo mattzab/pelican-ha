@@ -6,6 +6,8 @@ DOMAIN = "pelican_thermostat"
 # Configuration keys
 CONF_BASE_URL = "base_url"
 CONF_THERMOSTAT_NAME = "thermostat_name"
+CONF_USERNAME = "username"
+CONF_PASSWORD = "password"
 
 # Default values
 DEFAULT_BASE_URL = "https://demo.officeclimatecontrol.net/api.cgi"

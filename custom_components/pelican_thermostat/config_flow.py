@@ -7,13 +7,14 @@ from typing import Any
 import voluptuous as vol
 
 from homeassistant import config_entries
-from homeassistant.const import CONF_PASSWORD, CONF_USERNAME
 from homeassistant.data_entry_flow import FlowResult
 
 from .const import (
     CONF_BASE_URL,
+    CONF_PASSWORD,
     CONF_POLL_INTERVAL,
     CONF_THERMOSTAT_NAME,
+    CONF_USERNAME,
     DEFAULT_BASE_URL,
     DEFAULT_POLL_INTERVAL,
     DOMAIN,
