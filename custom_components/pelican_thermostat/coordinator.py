@@ -4,6 +4,7 @@ from __future__ import annotations
 import asyncio
 import logging
 import xml.etree.ElementTree as ET
+from datetime import timedelta
 from typing import Any
 
 import aiohttp
@@ -47,7 +48,7 @@ class PelicanThermostatCoordinator(DataUpdateCoordinator):
             hass,
             _LOGGER,
             name="Pelican Thermostat",
-            update_interval=poll_interval,
+            update_interval=timedelta(seconds=poll_interval),
         )
         self.entry = entry
         self.base_url = entry.data.get(CONF_BASE_URL, DEFAULT_BASE_URL)
