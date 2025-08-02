@@ -17,10 +17,7 @@ _LOGGER = logging.getLogger(__name__)
 PLATFORMS: list[Platform] = [Platform.CLIMATE, Platform.SENSOR]
 
 
-async def async_setup(hass: HomeAssistant, config: dict) -> bool:
-    """Set up the Pelican Thermostat component."""
-    hass.data.setdefault(DOMAIN, {})
-    return True
+# No async_setup needed for config flow integrations
 
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
