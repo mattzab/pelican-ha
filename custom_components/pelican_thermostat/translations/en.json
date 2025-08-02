@@ -1,0 +1,23 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "data": {
+          "username": "Username",
+          "password": "Password",
+          "base_url": "Base URL",
+          "thermostat_name": "Thermostat Name",
+          "poll_interval": "Poll Interval (seconds)"
+        },
+        "description": "Enter your Pelican Thermostat credentials and configuration.",
+        "title": "Pelican Thermostat Configuration"
+      }
+    },
+    "error": {
+      "cannot_connect": "Failed to connect to Pelican Thermostat API"
+    },
+    "abort": {
+      "already_configured": "Device is already configured"
+    }
+  }
+} 

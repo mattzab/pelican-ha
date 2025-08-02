@@ -1,0 +1,33 @@
+# GET Request: Get the current Temperature, Humidity, and CO2 Level for a thermostat named "Lobby"
+curl -Ls "https://demo.officeclimatecontrol.net/api.cgi?username=pelicandemosite@gmail.com&password=pelican&request=get&object=Thermostat&selection=name:Lobby;&value=temperature;humidity;co2Level"
+
+
+
+
+# Example commands to set the system mode and various setpoints for the thermostat named "Lobby"
+# Base URL and credentials for all requests
+BASE_URL="https://demo.officeclimatecontrol.net/api.cgi?username=pelicandemosite@gmail.com&password=pelican&request=set&object=Thermostat&selection=name:Lobby;"
+
+# Set system mode to Auto
+curl -Ls "${BASE_URL}&value=system:Auto"
+
+# Set system mode to Heat
+curl -Ls "${BASE_URL}&value=system:Heat"
+
+# Set system mode to Cool
+curl -Ls "${BASE_URL}&value=system:Cool"
+
+# Set system mode to Off
+curl -Ls "${BASE_URL}&value=system:Off"
+
+# Set heating setpoint to 65°F
+curl -Ls "${BASE_URL}&value=heatSetting:65"
+
+# Set cooling setpoint to 75°F
+curl -Ls "${BASE_URL}&value=coolSetting:75"
+
+# Set combined heating and cooling setpoints
+curl -Ls "${BASE_URL}&value=heatSetting:62;coolSetting:78"
+
+# Set heating and cooling ranges with setpoints
+curl -Ls "${BASE_URL}&value=heatMin:55;heatMax:70;coolMin:74;coolMax:82;heatSetting:66;coolSetting:76"

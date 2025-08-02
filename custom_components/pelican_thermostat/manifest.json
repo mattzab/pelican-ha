@@ -1,0 +1,11 @@
+{
+  "domain": "pelican_thermostat",
+  "name": "Pelican Thermostat",
+  "documentation": "https://github.com/mattzab/pelican-ha",
+  "dependencies": [],
+  "codeowners": ["@mattzab"],
+  "requirements": ["aiohttp"],
+  "version": "1.0.0",
+  "config_flow": true,
+  "iot_class": "cloud_polling"
+} 
