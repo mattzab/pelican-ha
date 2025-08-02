@@ -4,6 +4,8 @@ from __future__ import annotations
 import logging
 from typing import Any
 
+import voluptuous as vol
+
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import Platform
 from homeassistant.core import HomeAssistant
@@ -18,8 +20,8 @@ _LOGGER = logging.getLogger(__name__)
 
 PLATFORMS: list[Platform] = [Platform.CLIMATE, Platform.SENSOR]
 
-# Remove the CONFIG_SCHEMA since we're using config flow
-# CONFIG_SCHEMA = vol.Schema({DOMAIN: vol.Schema({})})
+# Empty config schema for config flow integrations
+CONFIG_SCHEMA = vol.Schema({})
 
 
 async def async_setup(hass: HomeAssistant, config: dict) -> bool:
