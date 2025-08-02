@@ -4,24 +4,17 @@ from __future__ import annotations
 import logging
 from typing import Any
 
-import voluptuous as vol
-
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import Platform
 from homeassistant.core import HomeAssistant
 from homeassistant.exceptions import ConfigEntryNotReady
 
-from .const import (
-    DOMAIN,
-)
+from .const import DOMAIN
 from .coordinator import PelicanThermostatCoordinator
 
 _LOGGER = logging.getLogger(__name__)
 
 PLATFORMS: list[Platform] = [Platform.CLIMATE, Platform.SENSOR]
-
-# Empty config schema for config flow integrations
-CONFIG_SCHEMA = vol.Schema({})
 
 
 async def async_setup(hass: HomeAssistant, config: dict) -> bool:
