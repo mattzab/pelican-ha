@@ -44,6 +44,7 @@ class PelicanThermostatCoordinator(DataUpdateCoordinator):
     def __init__(self, hass: HomeAssistant, entry: ConfigEntry) -> None:
         """Initialize the coordinator."""
         poll_interval = entry.data.get(CONF_POLL_INTERVAL, DEFAULT_POLL_INTERVAL)
+        _LOGGER.info("Initializing coordinator with poll interval: %s seconds", poll_interval)
         super().__init__(
             hass,
             _LOGGER,
@@ -55,17 +56,22 @@ class PelicanThermostatCoordinator(DataUpdateCoordinator):
         self.username = entry.data[CONF_USERNAME]
         self.password = entry.data[CONF_PASSWORD]
         self.thermostat_name = entry.data[CONF_THERMOSTAT_NAME]
+        _LOGGER.info("Coordinator initialized with update_interval: %s", self.update_interval)
 
     async def _async_update_data(self) -> dict[str, Any]:
         """Update data via API."""
+        _LOGGER.info("Polling thermostat data...")
         try:
             async with async_timeout.timeout(15):  # Increased timeout for offline thermostats
-                return await self._fetch_thermostat_data()
+                result = await self._fetch_thermostat_data()
+                _LOGGER.info("Successfully polled thermostat data")
+                return result
         except asyncio.TimeoutError:
             _LOGGER.warning("Timeout fetching thermostat data (thermostat may be offline)")
             # Return last known data instead of failing completely
             return self.data if self.data else {}
         except Exception as err:
+            _LOGGER.error("Error polling thermostat data: %s", err)
             raise UpdateFailed(f"Error communicating with API: {err}") from err
 
     async def _fetch_thermostat_data(self) -> dict[str, Any]:
