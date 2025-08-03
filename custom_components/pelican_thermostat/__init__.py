@@ -32,8 +32,12 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
 
     hass.data[DOMAIN][entry.entry_id] = coordinator
 
+    # Ensure the coordinator is properly set up for polling
+    # The coordinator will automatically start polling when entities are added
+    _LOGGER.info("Coordinator setup complete, update_interval: %s", coordinator.update_interval)
+    
     # Start the coordinator's background polling
-    coordinator.async_start()
+    await coordinator.async_start()
 
     await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
 

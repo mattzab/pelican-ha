@@ -85,4 +85,9 @@ class PelicanThermostatSensor(SensorEntity):
         """Return True if entity is available."""
         # Consider available even if last update failed, as thermostat might be offline
         # but we still want to show last known values
-        return True 
+        return True
+
+    @property
+    def should_poll(self) -> bool:
+        """Return the polling state."""
+        return False 

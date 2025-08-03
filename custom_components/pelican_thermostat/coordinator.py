@@ -58,6 +58,18 @@ class PelicanThermostatCoordinator(DataUpdateCoordinator):
         self.thermostat_name = entry.data[CONF_THERMOSTAT_NAME]
         _LOGGER.info("Coordinator initialized with update_interval: %s", self.update_interval)
 
+    async def async_start(self) -> None:
+        """Start the coordinator."""
+        _LOGGER.info("Starting coordinator with update_interval: %s", self.update_interval)
+        await super().async_start()
+
+    def start_polling(self) -> None:
+        """Start the polling process."""
+        _LOGGER.info("Starting coordinator polling with interval: %s seconds", 
+                    self.update_interval.total_seconds() if self.update_interval else "None")
+        # Force an immediate update to start the polling cycle
+        self.hass.async_create_task(self.async_request_refresh())
+
     async def _async_update_data(self) -> dict[str, Any]:
         """Update data via API."""
         _LOGGER.info("Polling thermostat data...")

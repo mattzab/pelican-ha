@@ -145,4 +145,9 @@ class PelicanThermostatEntity(ClimateEntity):
         """Return True if entity is available."""
         # Consider available even if last update failed, as thermostat might be offline
         # but we still want to allow control attempts
-        return True 
+        return True
+
+    @property
+    def should_poll(self) -> bool:
+        """Return the polling state."""
+        return False 
