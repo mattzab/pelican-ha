@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 from homeassistant.components.sensor import SensorEntity
+from homeassistant.helpers.update_coordinator import CoordinatorEntity
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import (
     PERCENTAGE,
@@ -54,7 +55,7 @@ async def async_setup_entry(
     async_add_entities(entities)
 
 
-class PelicanThermostatSensor(SensorEntity):
+class PelicanThermostatSensor(CoordinatorEntity, SensorEntity):
     """Representation of a Pelican Thermostat sensor."""
 
     def __init__(
@@ -64,8 +65,7 @@ class PelicanThermostatSensor(SensorEntity):
         sensor_info: dict,
     ) -> None:
         """Initialize the sensor."""
-        super().__init__()
-        self.coordinator = coordinator
+        super().__init__(coordinator)
         self.config_entry = config_entry
         self.sensor_info = sensor_info
         
@@ -87,7 +87,4 @@ class PelicanThermostatSensor(SensorEntity):
         # but we still want to show last known values
         return True
 
-    @property
-    def should_poll(self) -> bool:
-        """Return the polling state."""
-        return False 
+ 

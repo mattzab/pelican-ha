@@ -9,6 +9,7 @@ from homeassistant.components.climate import (
     ClimateEntityFeature,
     HVACMode,
 )
+from homeassistant.helpers.update_coordinator import CoordinatorEntity
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import (
     ATTR_TEMPERATURE,
@@ -54,7 +55,7 @@ async def async_setup_entry(
     async_add_entities([PelicanThermostatEntity(coordinator, config_entry)])
 
 
-class PelicanThermostatEntity(ClimateEntity):
+class PelicanThermostatEntity(CoordinatorEntity, ClimateEntity):
     """Representation of a Pelican Thermostat."""
 
     _attr_has_entity_name = True
@@ -67,8 +68,7 @@ class PelicanThermostatEntity(ClimateEntity):
         self, coordinator: PelicanThermostatCoordinator, config_entry: ConfigEntry
     ) -> None:
         """Initialize the thermostat."""
-        super().__init__()
-        self.coordinator = coordinator
+        super().__init__(coordinator)
         self.config_entry = config_entry
         self._attr_name = config_entry.data[CONF_THERMOSTAT_NAME]
         self._attr_unique_id = f"{config_entry.entry_id}_climate"
@@ -147,7 +147,4 @@ class PelicanThermostatEntity(ClimateEntity):
         # but we still want to allow control attempts
         return True
 
-    @property
-    def should_poll(self) -> bool:
-        """Return the polling state."""
-        return False 
+ 
