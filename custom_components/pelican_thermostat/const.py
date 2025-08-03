@@ -31,6 +31,7 @@ OBJECT_THERMOSTAT = "Thermostat"
 VALUE_TEMPERATURE = "temperature"
 VALUE_HUMIDITY = "humidity"
 VALUE_CO2_LEVEL = "co2Level"
+VALUE_RUN_STATUS = "runStatus"
 
 # API values for set requests
 VALUE_SYSTEM = "system"

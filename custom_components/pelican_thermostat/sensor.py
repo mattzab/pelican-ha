@@ -33,6 +33,12 @@ SENSORS = [
         "unit": "ppm",
         "icon": "mdi:molecule-co2",
     },
+    {
+        "key": "run_status",
+        "name": "Run Status",
+        "unit": None,
+        "icon": "mdi:fan",
+    },
 ]
 
 

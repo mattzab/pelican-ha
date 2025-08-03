@@ -116,6 +116,12 @@ class PelicanThermostatEntity(CoordinatorEntity, ClimateEntity):
             return HVACMode.OFF
         return HVAC_MODE_MAP.get(system_mode, HVACMode.OFF)
 
+    @property
+    def run_status(self) -> str | None:
+        """Return the current run status."""
+        data = self.coordinator.data
+        return data.get("run_status")
+
     async def async_set_temperature(self, **kwargs: Any) -> None:
         """Set new target temperature."""
         if ATTR_TEMPERATURE in kwargs:

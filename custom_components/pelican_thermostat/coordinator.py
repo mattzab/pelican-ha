@@ -33,6 +33,7 @@ from .const import (
     VALUE_CO2_LEVEL,
     VALUE_HUMIDITY,
     VALUE_TEMPERATURE,
+    VALUE_RUN_STATUS,
 )
 
 _LOGGER = logging.getLogger(__name__)
@@ -83,7 +84,7 @@ class PelicanThermostatCoordinator(DataUpdateCoordinator):
             API_REQUEST: REQUEST_GET,
             API_OBJECT: OBJECT_THERMOSTAT,
             API_SELECTION: f"name:{self.thermostat_name};",
-            API_VALUE: f"{VALUE_TEMPERATURE};{VALUE_HUMIDITY};{VALUE_CO2_LEVEL}",
+            API_VALUE: f"{VALUE_TEMPERATURE};{VALUE_HUMIDITY};{VALUE_CO2_LEVEL};{VALUE_RUN_STATUS}",
         }
 
         async with aiohttp.ClientSession() as session:
@@ -154,6 +155,13 @@ class PelicanThermostatCoordinator(DataUpdateCoordinator):
                     result["co2_level"] = int(co2_elem.text)
                 except ValueError:
                     _LOGGER.warning("Invalid CO2 level value: %s", co2_elem.text)
+            
+            # Parse run status
+            run_status_elem = thermostat_elem.find("runStatus")
+            if run_status_elem is not None and run_status_elem.text:
+                result["run_status"] = run_status_elem.text
+            else:
+                result["run_status"] = None
             
             # For now, we'll need to make additional API calls to get system mode and setpoints
             # These might not be available in the current API response
