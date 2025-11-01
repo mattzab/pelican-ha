@@ -34,6 +34,7 @@ from .const import (
     VALUE_HUMIDITY,
     VALUE_TEMPERATURE,
     VALUE_RUN_STATUS,
+    VALUE_SCHEDULE,
 )
 
 _LOGGER = logging.getLogger(__name__)
@@ -77,14 +78,14 @@ class PelicanThermostatCoordinator(DataUpdateCoordinator):
 
     async def _fetch_thermostat_data(self) -> dict[str, Any]:
         """Fetch thermostat data from API."""
-        # Get basic sensor data
+        # Get all data in a single request to improve performance
         params = {
             API_USERNAME: self.username,
             API_PASSWORD: self.password,
             API_REQUEST: REQUEST_GET,
             API_OBJECT: OBJECT_THERMOSTAT,
             API_SELECTION: f"name:{self.thermostat_name};",
-            API_VALUE: f"{VALUE_TEMPERATURE};{VALUE_HUMIDITY};{VALUE_CO2_LEVEL};{VALUE_RUN_STATUS}",
+            API_VALUE: f"{VALUE_TEMPERATURE};{VALUE_HUMIDITY};{VALUE_CO2_LEVEL};{VALUE_RUN_STATUS};{VALUE_SCHEDULE};system;heatSetting;coolSetting",
         }
 
         async with aiohttp.ClientSession() as session:
@@ -94,22 +95,6 @@ class PelicanThermostatCoordinator(DataUpdateCoordinator):
                 _LOGGER.debug("API response: %s", data)
                 
                 result = self._parse_thermostat_data(data)
-                
-                # Try to get additional system information
-                # Note: These might not be available if thermostat is offline
-                try:
-                    # Try to get system mode
-                    system_params = params.copy()
-                    system_params[API_VALUE] = "system"
-                    async with session.get(self.base_url, params=system_params, timeout=aiohttp.ClientTimeout(total=10)) as system_response:
-                        if system_response.status == 200:
-                            system_data = await system_response.text()
-                            system_result = self._parse_system_data(system_data)
-                            result.update(system_result)
-                except asyncio.TimeoutError:
-                    _LOGGER.debug("Timeout fetching system data (thermostat may be offline)")
-                except Exception as err:
-                    _LOGGER.debug("Could not fetch system data: %s", err)
                 
                 return result
 
@@ -163,42 +148,12 @@ class PelicanThermostatCoordinator(DataUpdateCoordinator):
             else:
                 result["run_status"] = None
             
-            # For now, we'll need to make additional API calls to get system mode and setpoints
-            # These might not be available in the current API response
-            result["system_mode"] = None
-            result["heat_setting"] = None
-            result["cool_setting"] = None
-            
-            return result
-            
-        except ET.ParseError as err:
-            _LOGGER.error("Failed to parse XML response: %s", err)
-            return {}
-        except Exception as err:
-            _LOGGER.error("Error parsing thermostat data: %s", err)
-            return {}
-    
-    def _parse_system_data(self, data: str) -> dict[str, Any]:
-        """Parse system data from API response."""
-        try:
-            root = ET.fromstring(data)
-            
-            # Check if the request was successful
-            success_elem = root.find("success")
-            if success_elem is None or success_elem.text != "1":
-                return {}
-            
-            # Parse thermostat data
-            thermostat_elem = root.find("Thermostat")
-            if thermostat_elem is None:
-                return {}
-            
-            result = {}
-            
             # Parse system mode
             system_elem = thermostat_elem.find("system")
             if system_elem is not None and system_elem.text:
                 result["system_mode"] = system_elem.text
+            else:
+                result["system_mode"] = None
             
             # Parse heat setting
             heat_elem = thermostat_elem.find("heatSetting")
@@ -207,6 +162,8 @@ class PelicanThermostatCoordinator(DataUpdateCoordinator):
                     result["heat_setting"] = float(heat_elem.text)
                 except ValueError:
                     _LOGGER.warning("Invalid heat setting value: %s", heat_elem.text)
+            else:
+                result["heat_setting"] = None
             
             # Parse cool setting
             cool_elem = thermostat_elem.find("coolSetting")
@@ -215,14 +172,23 @@ class PelicanThermostatCoordinator(DataUpdateCoordinator):
                     result["cool_setting"] = float(cool_elem.text)
                 except ValueError:
                     _LOGGER.warning("Invalid cool setting value: %s", cool_elem.text)
+            else:
+                result["cool_setting"] = None
+            
+            # Parse schedule status
+            schedule_elem = thermostat_elem.find("schedule")
+            if schedule_elem is not None and schedule_elem.text:
+                result["schedule"] = schedule_elem.text
+            else:
+                result["schedule"] = None
             
             return result
             
         except ET.ParseError as err:
-            _LOGGER.debug("Failed to parse system XML response: %s", err)
+            _LOGGER.error("Failed to parse XML response: %s", err)
             return {}
         except Exception as err:
-            _LOGGER.debug("Error parsing system data: %s", err)
+            _LOGGER.error("Error parsing thermostat data: %s", err)
             return {}
             
     async def set_system_mode(self, mode: str) -> bool:
