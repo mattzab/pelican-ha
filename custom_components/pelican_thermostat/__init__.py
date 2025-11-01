@@ -14,7 +14,12 @@ from .coordinator import PelicanThermostatCoordinator
 
 _LOGGER = logging.getLogger(__name__)
 
-PLATFORMS: list[Platform] = [Platform.CLIMATE, Platform.SENSOR]
+PLATFORMS: list[Platform] = [
+    Platform.CLIMATE,
+    Platform.SENSOR,
+    Platform.SWITCH,
+    Platform.NUMBER,
+]
 
 
 # No async_setup needed for config flow integrations

@@ -7,6 +7,7 @@ from typing import Any
 from homeassistant.components.climate import (
     ClimateEntity,
     ClimateEntityFeature,
+    HVACAction,
     HVACMode,
 )
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
@@ -23,6 +24,10 @@ from homeassistant.helpers.typing import ConfigType, DiscoveryInfoType
 from .const import (
     CONF_THERMOSTAT_NAME,
     DOMAIN,
+    FAN_AUTO,
+    FAN_ON,
+    STATUS_OCCUPIED,
+    STATUS_VACANT,
     SYSTEM_AUTO,
     SYSTEM_COOL,
     SYSTEM_HEAT,
@@ -40,6 +45,25 @@ HVAC_MODE_MAP = {
 }
 
 HVAC_MODE_MAP_REVERSE = {v: k for k, v in HVAC_MODE_MAP.items()}
+
+# Map Pelican fan modes to Home Assistant fan modes
+FAN_MODE_MAP = {
+    FAN_AUTO: "auto",
+    FAN_ON: "on",
+}
+
+FAN_MODE_MAP_REVERSE = {v: k for k, v in FAN_MODE_MAP.items()}
+
+# Preset modes for occupied/vacant status
+PRESET_OCCUPIED = "occupied"
+PRESET_VACANT = "vacant"
+
+PRESET_MODE_MAP = {
+    STATUS_OCCUPIED: PRESET_OCCUPIED,
+    STATUS_VACANT: PRESET_VACANT,
+}
+
+PRESET_MODE_MAP_REVERSE = {v: k for k, v in PRESET_MODE_MAP.items()}
 
 
 async def async_setup_entry(
@@ -62,6 +86,8 @@ class PelicanThermostatEntity(CoordinatorEntity, ClimateEntity):
     _attr_supported_features = (
         ClimateEntityFeature.TARGET_TEMPERATURE
         | ClimateEntityFeature.TARGET_TEMPERATURE_RANGE
+        | ClimateEntityFeature.FAN_MODE
+        | ClimateEntityFeature.PRESET_MODE
     )
 
     def __init__(
@@ -77,6 +103,8 @@ class PelicanThermostatEntity(CoordinatorEntity, ClimateEntity):
         self._attr_target_temperature_step = 1.0
         self._attr_min_temp = 50.0
         self._attr_max_temp = 90.0
+        self._attr_fan_modes = ["auto", "on"]
+        self._attr_preset_modes = [PRESET_OCCUPIED, PRESET_VACANT]
 
     @property
     def current_temperature(self) -> float | None:
@@ -145,6 +173,60 @@ class PelicanThermostatEntity(CoordinatorEntity, ClimateEntity):
         system_mode = HVAC_MODE_MAP_REVERSE.get(hvac_mode, SYSTEM_OFF)
         await self.coordinator.set_system_mode(system_mode)
         await self.coordinator.async_request_refresh()
+
+    @property
+    def fan_mode(self) -> str | None:
+        """Return the current fan mode."""
+        data = self.coordinator.data
+        pelican_fan_mode = data.get("fan")
+        return FAN_MODE_MAP.get(pelican_fan_mode)
+
+    async def async_set_fan_mode(self, fan_mode: str) -> None:
+        """Set new fan mode."""
+        pelican_fan_mode = FAN_MODE_MAP_REVERSE.get(fan_mode)
+        if pelican_fan_mode:
+            await self.coordinator.set_fan_mode(pelican_fan_mode)
+            await self.coordinator.async_request_refresh()
+
+    @property
+    def preset_mode(self) -> str | None:
+        """Return the current preset mode."""
+        data = self.coordinator.data
+        status = data.get("status")
+        return PRESET_MODE_MAP.get(status)
+
+    async def async_set_preset_mode(self, preset_mode: str) -> None:
+        """Set new preset mode."""
+        pelican_status = PRESET_MODE_MAP_REVERSE.get(preset_mode)
+        if pelican_status:
+            # Note: Setting status might not be directly supported by API
+            # This would require further investigation of API capabilities
+            _LOGGER.warning("Setting preset mode is not yet fully implemented")
+
+    @property
+    def hvac_action(self) -> HVACAction | None:
+        """Return the current HVAC action (heating, cooling, idle, etc)."""
+        data = self.coordinator.data
+        run_status = data.get("run_status")
+        
+        if not run_status:
+            return HVACAction.IDLE
+        
+        run_status_lower = run_status.lower()
+        
+        # Map run status to HVAC actions
+        if "heat" in run_status_lower:
+            return HVACAction.HEATING
+        elif "cool" in run_status_lower:
+            return HVACAction.COOLING
+        elif "fan" in run_status_lower:
+            return HVACAction.FAN
+        elif "idle" in run_status_lower or "off" in run_status_lower:
+            return HVACAction.IDLE
+        
+        # Default to idle if we can't determine
+        return HVACAction.IDLE
+
 
     @property
     def available(self) -> bool:
