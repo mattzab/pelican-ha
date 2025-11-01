@@ -20,7 +20,7 @@ The second call was often failing, causing the climate entity to lack current se
 - Parse system mode, heat settings, and cool settings directly from main response (lines 116-195)
 - Removed redundant `_parse_system_data` method
 
-### Issue 2: Schedule Support (IN PROGRESS)
+### Issue 2: Schedule Support (COMPLETE)
 
 **Goal**: Retrieve and display thermostat schedule status in Home Assistant
 
@@ -29,12 +29,33 @@ The second call was often failing, causing the climate entity to lack current se
 - Schedule indicates if thermostat is in schedule mode or manual mode
 - API endpoint: `value=schedule` in GET request
 
-**Changes Made So Far**:
+**Completed Changes**:
 1. Added `VALUE_SCHEDULE = "schedule"` constant to `const.py` (line 35)
 2. Updated coordinator to fetch schedule in API request (line 87)
 3. Added schedule parsing to `_parse_thermostat_data` method (lines 177-182)
+4. Added schedule sensor to `sensor.py` SENSORS list (lines 42-47)
 
-**Current Task**: Creating sensor entity to display schedule status
+**Status**: Schedule sensor implementation complete and ready for testing
+
+### Issue 3: Configurable Polling Interval (COMPLETE)
+
+**Goal**: Allow users to adjust the polling interval via Home Assistant UI
+
+**Implementation**:
+1. Added `CONF_POLL_INTERVAL` and `DEFAULT_POLL_INTERVAL` constants to `const.py`
+2. Initial setup form includes polling interval field (30-300 seconds range)
+3. Options flow added to `config_flow.py` for reconfiguring after setup
+4. Coordinator checks options first, then data, then default value
+5. Added `update_poll_interval()` method to coordinator
+6. Added options update listener in `__init__.py` to reload on changes
+
+**Usage**:
+- During initial setup: Choose polling interval (default: 70 seconds)
+- After setup: Go to integration settings → Configure to change interval
+- Valid range: 30-300 seconds (0.5 to 5 minutes)
+- Integration automatically reloads when interval is changed
+
+**Status**: Complete and ready for testing
 
 ## API Information
 
@@ -78,9 +99,12 @@ custom_components/pelican_thermostat/
 ## Next Steps
 1. ✅ Add schedule fetching to coordinator
 2. ✅ Parse schedule status in coordinator
-3. 🔄 Create sensor entity for schedule status (IN PROGRESS)
-4. ⏳ Test schedule functionality
+3. ✅ Create sensor entity for schedule status
+4. 🔄 Test schedule functionality (NEXT)
 5. ⏳ Consider adding ability to toggle schedule on/off via switch entity
+   - API supports setting schedule: "On", "Off", or shared schedule name
+   - Could use switch entity to toggle between On/Off
+   - Or select entity to choose between On/Off/shared schedule names
 
 ## Testing Commands
 ```bash
@@ -96,3 +120,6 @@ curl -Ls "https://demo.officeclimatecontrol.net/api.cgi?username=pelicandemosite
 - All API communication happens over SSL
 - The coordinator polls every 70 seconds by default
 - Temperature setting fix ensures setpoints are always available to climate entity
+- API specification document available at `Pelican_API_Specifications.pdf`
+- Schedule can be set via API (supports "On", "Off", or shared schedule name)
+- User can define custom attributes via API for any thermostat

@@ -45,7 +45,11 @@ class PelicanThermostatCoordinator(DataUpdateCoordinator):
 
     def __init__(self, hass: HomeAssistant, entry: ConfigEntry) -> None:
         """Initialize the coordinator."""
-        poll_interval = entry.data.get(CONF_POLL_INTERVAL, DEFAULT_POLL_INTERVAL)
+        # Check options first, fall back to data, then default
+        poll_interval = entry.options.get(
+            CONF_POLL_INTERVAL,
+            entry.data.get(CONF_POLL_INTERVAL, DEFAULT_POLL_INTERVAL)
+        )
         _LOGGER.info("Initializing coordinator with poll interval: %s seconds", poll_interval)
         super().__init__(
             hass,
@@ -59,6 +63,17 @@ class PelicanThermostatCoordinator(DataUpdateCoordinator):
         self.password = entry.data[CONF_PASSWORD]
         self.thermostat_name = entry.data[CONF_THERMOSTAT_NAME]
         _LOGGER.info("Coordinator initialized with update_interval: %s", self.update_interval)
+
+    def update_poll_interval(self) -> None:
+        """Update the poll interval from config entry options."""
+        poll_interval = self.entry.options.get(
+            CONF_POLL_INTERVAL,
+            self.entry.data.get(CONF_POLL_INTERVAL, DEFAULT_POLL_INTERVAL)
+        )
+        new_interval = timedelta(seconds=poll_interval)
+        if self.update_interval != new_interval:
+            _LOGGER.info("Updating poll interval from %s to %s", self.update_interval, new_interval)
+            self.update_interval = new_interval
 
     async def _async_update_data(self) -> dict[str, Any]:
         """Update data via API."""
