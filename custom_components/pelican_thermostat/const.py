@@ -27,27 +27,95 @@ REQUEST_SET = "set"
 # API objects
 OBJECT_THERMOSTAT = "Thermostat"
 
-# API values for get requests
+# API values for get requests - Measurements
 VALUE_TEMPERATURE = "temperature"
 VALUE_HUMIDITY = "humidity"
 VALUE_CO2_LEVEL = "co2Level"
 VALUE_RUN_STATUS = "runStatus"
 VALUE_SCHEDULE = "schedule"
 
+# API values for get requests - Status
+VALUE_STATUS = "status"  # Occupied/Vacant
+VALUE_SET_BY = "setBy"  # Station/Remote/Schedule
+VALUE_FRONT_KEYPAD = "frontKeypad"  # On/Off
+VALUE_AUX_STATUS = "auxStatus"  # On/Off
+VALUE_STATUS_DISPLAY = "statusDisplay"  # Human readable status
+
+# API values for get requests - Fan
+VALUE_FAN = "fan"  # Auto/On
+
+# API values for get requests - Humidity settings
+VALUE_HUMIDIFY_SETTING = "humidifySetting"
+VALUE_DEHUMIDIFY_SETTING = "dehumidifySetting"
+VALUE_HUMIDITY_CONTROL = "humidityControl"  # None/Humidify/Dehumidify/Full Control/Cool Only
+
+# API values for get requests - CO2
+VALUE_CO2_SETTING = "co2Setting"
+
+# API values for get requests - System configuration
+VALUE_HEAT_STAGES = "heatStages"
+VALUE_COOL_STAGES = "coolStages"
+VALUE_FAN_STAGES = "fanStages"
+VALUE_SYSTEM_TYPE = "systemType"  # Conventional/HeatPump
+VALUE_TEMPERATURE_FORMAT = "temperatureFormat"  # Fahrenheit/Celsius
+VALUE_CYCLE_RATE = "cycleRate"
+VALUE_ANTICIPATION_DEGREES = "anticipationDegrees"
+VALUE_CALIBRATION_OFFSET = "calibrationOffset"
+
+# API values for get requests - Temperature limits
+VALUE_MIN_HEAT_SETTING = "minHeatSetting"
+VALUE_MAX_HEAT_SETTING = "maxHeatSetting"
+VALUE_MIN_COOL_SETTING = "minCoolSetting"
+VALUE_MAX_COOL_SETTING = "maxCoolSetting"
+VALUE_MIN_SAFE_TEMP = "minSafeTemp"
+VALUE_MAX_SAFE_TEMP = "maxSafeTemp"
+
+# API values for get requests - Device info
+VALUE_SERIAL_NO = "serialNo"
+VALUE_GATEWAY = "gateway"
+VALUE_VERSION = "version"
+VALUE_INSTALL_DATE = "installDate"
+
+# API values for get requests - Notification settings
+VALUE_NOTIFICATION_SENSITIVITY = "notificationSensitivity"
+VALUE_NOTIFICATION_SETPOINT = "notificationSetpoint"
+VALUE_NOTIFICATION_UNREACHABLE = "notificationUnreachable"
+
 # API values for set requests
 VALUE_SYSTEM = "system"
 VALUE_HEAT_SETTING = "heatSetting"
 VALUE_COOL_SETTING = "coolSetting"
-VALUE_HEAT_MIN = "heatMin"
-VALUE_HEAT_MAX = "heatMax"
-VALUE_COOL_MIN = "coolMin"
-VALUE_COOL_MAX = "coolMax"
 
 # System modes
 SYSTEM_AUTO = "Auto"
 SYSTEM_HEAT = "Heat"
 SYSTEM_COOL = "Cool"
 SYSTEM_OFF = "Off"
+
+# Fan modes
+FAN_AUTO = "Auto"
+FAN_ON = "On"
+
+# Status values
+STATUS_OCCUPIED = "Occupied"
+STATUS_VACANT = "Vacant"
+
+# Set by values
+SET_BY_STATION = "Station"
+SET_BY_REMOTE = "Remote"
+SET_BY_SCHEDULE = "Schedule"
+
+# Keypad values
+KEYPAD_ON = "On"
+KEYPAD_OFF = "Off"
+
+# Schedule values
+SCHEDULE_ON = "On"
+SCHEDULE_OFF = "Off"
+
+# Aux status values
+AUX_ON = "On"
+AUX_OFF = "Off"
 
 # Configuration keys
 CONF_POLL_INTERVAL = "poll_interval"
