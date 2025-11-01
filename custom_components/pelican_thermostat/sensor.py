@@ -39,6 +39,12 @@ SENSORS = [
         "unit": None,
         "icon": "mdi:fan",
     },
+    {
+        "key": "schedule",
+        "name": "Schedule",
+        "unit": None,
+        "icon": "mdi:calendar-clock",
+    },
 ]
 
 
