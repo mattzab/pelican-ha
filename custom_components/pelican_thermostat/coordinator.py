@@ -8,7 +8,6 @@ from datetime import timedelta
 from typing import Any
 
 import aiohttp
-import async_timeout
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
@@ -110,7 +109,7 @@ class PelicanThermostatCoordinator(DataUpdateCoordinator):
         """Update data via API."""
         _LOGGER.info("Polling thermostat data...")
         try:
-            async with async_timeout.timeout(15):  # Increased timeout for offline thermostats
+            async with asyncio.timeout(15):  # Increased timeout for offline thermostats
                 result = await self._fetch_thermostat_data()
                 _LOGGER.info("Successfully polled thermostat data")
                 return result

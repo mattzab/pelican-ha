@@ -178,7 +178,7 @@ class PelicanThermostatEntity(CoordinatorEntity, ClimateEntity):
     def fan_mode(self) -> str | None:
         """Return the current fan mode."""
         data = self.coordinator.data
-        pelican_fan_mode = data.get("fan")
+        pelican_fan_mode = data.get("fan_mode")
         return FAN_MODE_MAP.get(pelican_fan_mode)
 
     async def async_set_fan_mode(self, fan_mode: str) -> None:
