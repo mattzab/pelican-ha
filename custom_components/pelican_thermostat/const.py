@@ -32,6 +32,7 @@ VALUE_TEMPERATURE = "temperature"
 VALUE_HUMIDITY = "humidity"
 VALUE_CO2_LEVEL = "co2Level"
 VALUE_RUN_STATUS = "runStatus"
+VALUE_SCHEDULE = "schedule"
 
 # API values for set requests
 VALUE_SYSTEM = "system"
