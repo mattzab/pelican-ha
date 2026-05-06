@@ -5,6 +5,61 @@ Home Assistant custom integration for Pelican Wireless Thermostat system.
 
 ## Recent Work Completed
 
+### Feature Branch: Comprehensive Enhancements (IN PROGRESS)
+**Branch**: `feature/comprehensive-enhancements`
+
+**Goal**: Implement complete integration with all available API features
+
+**Completed Enhancements**:
+
+#### 1. Enhanced Climate Entity (`climate.py`)
+- ✅ Added fan mode support (Auto/On)
+- ✅ Added preset modes (Occupied/Vacant status)
+- ✅ Added HVAC action display (Heating/Cooling/Fan/Idle)
+- Maps Pelican fan modes to Home Assistant fan modes
+- Displays current occupied/vacant status as preset mode
+
+#### 2. New Switch Platform (`switch.py`)
+- ✅ **Schedule Switch**: Toggle schedule on/off
+- ✅ **Front Keypad Switch**: Enable/disable (lock) front keypad
+- Provides easy control over schedule and keypad settings
+
+#### 3. Expanded Sensor Platform (`sensor.py`)
+Added 25+ new sensors for comprehensive monitoring:
+- **Status Sensors**: status, set_by, front_keypad, aux_status, status_display
+- **System Configuration**: heat_stages, cool_stages, fan_stages, system_type, temperature_format, cycle_rate, anticipation_degrees, calibration_offset
+- **Device Info**: serial_no, gateway, version, install_date
+- **Humidity Control**: humidity_control mode
+- **Fan Mode**: Current fan mode (Auto/On)
+
+#### 4. New Number Platform (`number.py`)
+Added adjustable setpoint controls:
+- ✅ **Humidity Controls**: humidify_setting, dehumidify_setting
+- ✅ **CO2 Control**: co2_setting
+- ✅ **Temperature Limits**: min_heat_setting, max_heat_setting, min_cool_setting, max_cool_setting
+- All with appropriate ranges and validation
+
+#### 5. Enhanced Coordinator (`coordinator.py`)
+- ✅ Fetches ~50 attributes in single optimized API call
+- ✅ Added 9 new setter methods for fan, schedule, keypad, humidity, CO2, and temp limits
+- ✅ Improved parsing with helper functions (parse_float, parse_int, parse_string)
+- ✅ Handles all new API attributes
+
+#### 6. Expanded Constants (`const.py`)
+- ✅ Added 40+ new API value constants
+- ✅ Fan mode constants (FAN_AUTO, FAN_ON)
+- ✅ Status constants (STATUS_OCCUPIED, STATUS_VACANT, etc.)
+- ✅ Configuration constants for all system settings
+- ✅ Device info constants
+
+**Next Steps**:
+1. Test all new entities in Home Assistant
+2. Verify API calls for new setter methods
+3. Test fan mode control
+4. Test switch entities (schedule, keypad)
+5. Test number entities (humidity, CO2, temp limits)
+6. Create pull request
+
 ### Issue 1: Temperature Setting Not Working (FIXED)
 **Problem**: Unable to set temperature from Home Assistant
 
@@ -74,37 +129,89 @@ The second call was often failing, causing the climate entity to lack current se
 &value=attribute1;attribute2;...
 ```
 
-### Key Thermostat Attributes
+### Key Thermostat Attributes (Expanded)
+
+#### Measurements
 - `temperature` - Current measured temperature
 - `humidity` - Current humidity (% RH)
 - `co2Level` - Current CO2 level
+
+#### Status
 - `runStatus` - Current heating/cooling status (Off, Cool-Stage1, Cool-Stage2, Heat-Stage1, Heat-Stage2, Fan, Fan2)
+- `status` - Occupied/Vacant status
+- `setBy` - Control source (Station/Remote/Schedule)
+- `frontKeypad` - Keypad enabled status (On/Off)
+- `auxStatus` - Auxiliary status (On/Off)
+- `statusDisplay` - Human readable status text
+
+#### Control Settings
 - `system` - System mode (Off, Auto, Heat, Cool)
 - `heatSetting` - Heat setpoint
 - `coolSetting` - Cool setpoint
 - `schedule` - Schedule status (On, Off, or shared schedule name)
+- `fan` - Fan mode (Auto/On)
+
+#### Humidity & CO2
+- `humidifySetting` - Humidification setpoint
+- `dehumidifySetting` - Dehumidification setpoint
+- `humidityControl` - Humidity control mode
+- `co2Setting` - CO2 setpoint
+
+#### System Configuration
+- `heatStages` - Number of heat stages
+- `coolStages` - Number of cool stages
+- `fanStages` - Number of fan stages
+- `systemType` - System type (Conventional/HeatPump)
+- `temperatureFormat` - Temperature unit (Fahrenheit/Celsius)
+- `cycleRate` - Cycle rate setting
+- `anticipationDegrees` - Anticipation offset
+- `calibrationOffset` - Temperature calibration offset
+
+#### Temperature Limits
+- `minHeatSetting` - Minimum heat setpoint allowed
+- `maxHeatSetting` - Maximum heat setpoint allowed
+- `minCoolSetting` - Minimum cool setpoint allowed
+- `maxCoolSetting` - Maximum cool setpoint allowed
+- `minSafeTemp` - Minimum safe temperature
+- `maxSafeTemp` - Maximum safe temperature
+
+#### Device Information
+- `serialNo` - Device serial number
+- `gateway` - Gateway identifier
+- `version` - Firmware version
+- `installDate` - Installation date
 
 ## File Structure
 ```
 custom_components/pelican_thermostat/
-├── __init__.py
-├── const.py              # Constants and API parameters
-├── coordinator.py        # Data coordinator (handles API communication)
-├── climate.py            # Climate entity (thermostat control)
-├── sensor.py             # Sensor entities (temperature, humidity, CO2, run status)
-├── config_flow.py        # Configuration UI
-└── manifest.json
+├── __init__.py           # Main integration setup, platform registration
+├── const.py              # Constants and API parameters (40+ API values)
+├── coordinator.py        # Data coordinator with 50+ attributes and 9 setters
+├── climate.py            # Climate entity (thermostat with fan & preset modes)
+├── sensor.py             # 25+ sensor entities (status, config, device info)
+├── switch.py             # Switch entities (schedule, keypad control)
+├── number.py             # Number entities (humidity, CO2, temp limits)
+├── config_flow.py        # Configuration UI (with polling interval)
+└── manifest.json         # Integration manifest
 ```
 
 ## Next Steps
-1. ✅ Add schedule fetching to coordinator
-2. ✅ Parse schedule status in coordinator
-3. ✅ Create sensor entity for schedule status
-4. 🔄 Test schedule functionality (NEXT)
-5. ⏳ Consider adding ability to toggle schedule on/off via switch entity
-   - API supports setting schedule: "On", "Off", or shared schedule name
-   - Could use switch entity to toggle between On/Off
-   - Or select entity to choose between On/Off/shared schedule names
+1. ✅ Temperature setting fix (consolidated API calls)
+2. ✅ Schedule sensor implementation
+3. ✅ Configurable polling interval
+4. ✅ Comprehensive API feature implementation
+5. 🔄 **Test comprehensive enhancements** (CURRENT)
+   - Test fan mode control in climate entity
+   - Test preset modes (occupied/vacant)
+   - Test HVAC action display
+   - Test schedule switch
+   - Test keypad switch
+   - Test new sensors (status, config, device info)
+   - Test number entities (humidity, CO2, temp limits)
+6. ⏳ Create documentation for all new features
+7. ⏳ Consider adding select entities for:
+   - Shared schedule selection
+   - Humidity control mode selection
 
 ## Testing Commands
 ```bash
@@ -118,8 +225,11 @@ curl -Ls "https://demo.officeclimatecontrol.net/api.cgi?username=pelicandemosite
 ## Notes
 - The integration uses XML responses from the API
 - All API communication happens over SSL
-- The coordinator polls every 70 seconds by default
+- The coordinator polls at user-configurable interval (default 70 seconds, range 30-300s)
 - Temperature setting fix ensures setpoints are always available to climate entity
 - API specification document available at `Pelican_API_Specifications.pdf`
 - Schedule can be set via API (supports "On", "Off", or shared schedule name)
 - User can define custom attributes via API for any thermostat
+- **Comprehensive Enhancement**: Integration now supports 50+ API attributes
+- **4 Platform Types**: Climate, Sensor, Switch, Number
+- **25+ Entities**: Full visibility and control over all thermostat features
